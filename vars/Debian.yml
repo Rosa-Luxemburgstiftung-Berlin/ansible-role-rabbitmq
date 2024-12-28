@@ -1,5 +1,6 @@
 ---
 # DEB (Cloudsmith)
+# see. https://www.rabbitmq.com/docs/install-debian#apt-quick-start-cloudsmith
 rabbitmq_deb_team_key: "https://keys.openpgp.org/vks/v1/by-fingerprint/0A9AF2115F4687BD29803A206B73A36E6026DFCA"
 rabbitmq_deb_team_key_location: "/usr/share/keyrings/com.rabbitmq.team.asc"
 rabbitmq_deb_repo_key: "https://ppa1.novemberain.com/gpg.9F4587F226208342.key"
