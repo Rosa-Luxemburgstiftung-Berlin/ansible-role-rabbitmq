@@ -10,6 +10,9 @@
       - "{{ ansible_os_family }}.yml"
   ignore_errors: true
 
+- name: Include OS specific tasks
+  ansible.builtin.include_tasks: "{{ ansible_os_family }}.yml"
+
 - name: Generate rabbitmq.conf
   ansible.builtin.template:
     src: rabbitmq.conf.j2
