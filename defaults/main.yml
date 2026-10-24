@@ -3,6 +3,8 @@ rabbitmq_daemon: rabbitmq-server
 rabbitmq_state: started
 rabbitmq_enabled: true
 
+# in order to use the erlang version provoded by the distro, just set
+# erlang_version:
 erlang_version: 28.5.0.8
 rabbitmq_version: 4.4.0
 

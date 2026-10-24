@@ -36,6 +36,7 @@
     update_cache: true
   when:
     - erlang_version is defined
+    - erlang_version is not none
     - erlang_version | length > 0
   with_items: "{{ erlang_packages }}"
   retries: 3
@@ -47,8 +48,7 @@
     install_recommends: true
     update_cache: true
   when:
-    - not erlang_version is defined
-    - not erlang_version | length > 0
+    - erlang_version is not defined or erlang_version is none or erlang_version | length == 0
 
 - name: Install RabbitMQ {{ rabbitmq_version }}
   ansible.builtin.apt:
@@ -64,6 +64,7 @@
   with_items: "{{ erlang_packages }}"
   when:
     - erlang_version is defined
+    - erlang_version is not none
     - erlang_version | length > 0
 
 - name: Prevent RabbitMQ from being upgraded
