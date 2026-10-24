@@ -19,6 +19,7 @@
   ansible.builtin.template:
     src: "{{ lookup('ansible.builtin.first_found', aptsources) }}"
     dest: "/etc/apt/sources.list.d/rabbitmq.list"
+    mode: '0644'
   vars:
     aptsources:
       paths:
