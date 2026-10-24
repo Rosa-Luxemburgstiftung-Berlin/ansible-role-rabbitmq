@@ -9,7 +9,7 @@
     - gnupg
     - apt-transport-https
 
-- name: Add Erlang and RabbitMQ signing keys
+- name: Add Team RabbitMQ's Repositories signing keys
   ansible.builtin.get_url:
     url: "{{ item.url }}"
     dest: "{{ item.dest }}"
@@ -18,26 +18,26 @@
     mode: '0644'
   with_items:
     - { url: "{{ rabbitmq_deb_team_key }}",  dest: "{{ rabbitmq_deb_team_key_location }}" }
-    - { url: "{{ rabbitmq_deb_repo_key }}",  dest: "{{ rabbitmq_deb_repo_key_location }}" }
-    - { url: "{{ erlang_deb_repo_key }}",    dest: "{{ erlang_deb_repo_key_location }}" }
 
-- name: Add Erlang repository
-  ansible.builtin.apt_repository:
-    repo: "{{ erlang_deb_repository }}"
-    state: present
-    filename: "erlang.list"
-
-- name: Add RabbitMQ repository
-  ansible.builtin.apt_repository:
-    repo: "{{ rabbitmq_deb_repository }}"
-    state: present
-    filename: "rabbitmq.list"
+- name: Add Team RabbitMQ's Repositories
+  ansible.builtin.template:
+    src: "{{ lookup('ansible.builtin.first_found', aptsources) }}"
+    dest: "/etc/apt/sources.list.d/rabbitmq.list"
+  vars:
+    aptsources:
+      paths:
+        - templates
+      files:
+        - "{{ ansible_distribution.lower() }}-{{ ansible_distribution_release.lower() }}-apt-sources.j2"
+        - "{{ ansible_distribution.lower() }}-apt-sources.j2"
+        - "{{ ansible_os_family.lower() }}-apt-sources.j2"
 
 - name: Install Erlang {{ erlang_version }}
   ansible.builtin.apt:
     name: "{{ item }}=1:{{ erlang_version }}*"
     state: present
     install_recommends: true
+    update_cache: true
   with_items: "{{ erlang_packages }}"
   retries: 3
   delay: 5
