@@ -38,9 +38,21 @@
     state: present
     install_recommends: true
     update_cache: true
+  when:
+    - erlang_version is defined
+    - erlang_version | length > 0
   with_items: "{{ erlang_packages }}"
   retries: 3
   delay: 5
+
+- name: Install latest Erlang
+  ansible.builtin.apt:
+    name: "{{ erlang_packages }}"
+    install_recommends: true
+    update_cache: true
+  when:
+    - not erlang_version is defined
+    - not erlang_version | length > 0
 
 - name: Install RabbitMQ {{ rabbitmq_version }}
   ansible.builtin.apt:
@@ -51,9 +63,12 @@
 
 - name: Prevent Erlang from being upgraded
   ansible.builtin.dpkg_selections:
-    name: "{{ item }}" 
+    name: "{{ item }}"
     selection: hold
   with_items: "{{ erlang_packages }}"
+  when:
+    - erlang_version is defined
+    - erlang_version | length > 0
 
 - name: Prevent RabbitMQ from being upgraded
   ansible.builtin.dpkg_selections:
