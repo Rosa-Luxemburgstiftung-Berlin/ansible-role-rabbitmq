@@ -1,13 +1,9 @@
 ---
 - name: Install required packages
   ansible.builtin.apt:
-    name: "{{ item }}"
+    name: "{{ rabbitmq_prerequired_packages }}"
     state: present
     update_cache: true
-  with_items:
-    - curl
-    - gnupg
-    - apt-transport-https
 
 - name: Add Team RabbitMQ's Repositories signing keys
   ansible.builtin.get_url:
