@@ -12,6 +12,10 @@
     owner: root
     group: root
     mode: '0644'
+  when:
+    - rabbitmq_version is defined or erlang_version is defined
+    - rabbitmq_version is not none or erlang_version is not none
+    - rabbitmq_version | length > 0 or erlang_version | length > 0
   with_items:
     - { url: "{{ rabbitmq_deb_team_key }}",  dest: "{{ rabbitmq_deb_team_key_location }}" }
 
@@ -28,6 +32,10 @@
         - "{{ ansible_distribution.lower() }}-{{ ansible_distribution_release.lower() }}-apt-sources.j2"
         - "{{ ansible_distribution.lower() }}-apt-sources.j2"
         - "{{ ansible_os_family.lower() }}-apt-sources.j2"
+  when:
+    - rabbitmq_version is defined or erlang_version is defined
+    - rabbitmq_version is not none or erlang_version is not none
+    - rabbitmq_version | length > 0 or erlang_version | length > 0
 
 - name: Install Erlang {{ erlang_version }}
   ansible.builtin.apt:
@@ -43,7 +51,7 @@
   retries: 3
   delay: 5
 
-- name: Install latest Erlang
+- name: Install latest Erlang from distro
   ansible.builtin.apt:
     name: "{{ erlang_packages }}"
     install_recommends: true
@@ -57,6 +65,17 @@
     state: present
   retries: 3
   delay: 5
+  when:
+    - rabbitmq_version is defined
+    - rabbitmq_version is not none
+    - rabbitmq_version | length > 0
+
+- name: Install RabbitMQ latest from distro
+  ansible.builtin.apt:
+    name: rabbitmq-server
+    state: present
+  when:
+    - rabbitmq_version is not defined or rabbitmq_version is none or rabbitmq_version | length == 0
 
 - name: Prevent Erlang from being upgraded
   ansible.builtin.dpkg_selections:
@@ -72,3 +91,7 @@
   ansible.builtin.dpkg_selections:
     name: rabbitmq-server
     selection: hold
+  when:
+    - rabbitmq_version is defined
+    - rabbitmq_version is not none
+    - rabbitmq_version | length > 0
